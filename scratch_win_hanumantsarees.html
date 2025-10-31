@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch & Win - Luxury Dupatta Giveaway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo p {
+            color: #666;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(118, 75, 162, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .scratch-area {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .scratch-card {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            height: 250px;
+            margin: 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .prize-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            padding: 20px;
+        }
+
+        .prize-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .prize-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .prize-subtext {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 10px;
+        }
+
+        #scratchCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
+        }
+
+        .instruction {
+            color: #764ba2;
+            font-size: 0.95em;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .stats {
+            background: rgba(118, 75, 162, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .stats p {
+            color: #333;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes winner-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .winner-animation {
+            animation: winner-pulse 0.6s ease-in-out 3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>✨ Scratch & Win ✨</h1>
+                <p style="font-size: 1.3em; font-weight: bold; color: #764ba2; margin: 10px 0;">Hanumant Sarees</p>
+                <p>Luxury Dupatta Giveaway</p>
+            </div>
+
+            <div id="loginForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Mobile Number</label>
+                    <input type="tel" id="phone" placeholder="Enter 10-digit mobile number" maxlength="10" required>
+                </div>
+                <button class="btn" onclick="login()">Start Playing</button>
+                <div id="errorMsg" class="error hidden"></div>
+            </div>
+
+            <div id="scratchSection" class="hidden">
+                <div class="scratch-area">
+                    <h2 style="color: #764ba2; margin-bottom: 10px;">Scratch to Reveal!</h2>
+                    <div class="scratch-card">
+                        <div class="prize-content" id="prizeContent"></div>
+                        <canvas id="scratchCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <canvas class="celebration" id="confetti" style="display: none;"></canvas>
+
+    <script>
+        const TOTAL_SLOTS = 100;
+        const PRIZE_POSITIONS = [5, 16, 32, 64];
+        
+        let users = [];
+        let currentUser = null;
+
+        function initGame() {
+            const saved = localStorage.getItem('scratchWinData');
+            if (saved) {
+                users = JSON.parse(saved);
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('scratchWinData', JSON.stringify(users));
+        }
+
+        function login() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!name || !phone) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            if (!/^\d{10}$/.test(phone)) {
+                showError('Please enter a valid 10-digit mobile number');
+                return;
+            }
+
+            const existingUser = users.find(u => u.phone === phone);
+            if (existingUser) {
+                showError('This number has already participated!');
+                return;
+            }
+
+            if (users.length >= TOTAL_SLOTS) {
+                showError('Sorry! All slots are filled. Contest is over.');
+                return;
+            }
+
+            currentUser = {
+                name: name,
+                phone: phone,
+                position: users.length + 1,
+                timestamp: Date.now()
+            };
+
+            users.push(currentUser);
+            saveGame();
+
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('scratchSection').classList.remove('hidden');
+            
+            initScratchCard();
+        }
+
+        function showError(msg) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = msg;
+            errorMsg.classList.remove('hidden');
+            setTimeout(() => {
+                errorMsg.classList.add('hidden');
+            }, 3000);
+        }
+
+        function initScratchCard() {
+            const canvas = document.getElementById('scratchCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            
+            // Set canvas size
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            
+            console.log('Canvas initialized:', canvas.width, canvas.height);
+
+            const isWinner = PRIZE_POSITIONS.includes(currentUser.position);
+            
+            const prizeContent = document.getElementById('prizeContent');
+            if (isWinner) {
+                prizeContent.innerHTML = `
+                    <div class="prize-icon">🎊</div>
+                    <div class="prize-text">CONGRATULATIONS!</div>
+                    <div class="prize-subtext">You won a Luxury Dupatta!</div>
+                    <div class="prize-subtext" style="margin-top: 15px;">Position: ${currentUser.position}</div>
+                `;
+                prizeContent.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+            } else {
+                prizeContent.innerHTML = `
+                    <div class="prize-icon">🍀</div>
+                    <div class="prize-text">Better Luck Next Time!</div>
+                    <div class="prize-subtext">Thank you for participating</div>
+                    <div class="prize-subtext" style="margin-top: 15px;">Position: ${currentUser.position}</div>
+                `;
+                prizeContent.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+
+            // Draw silver scratch layer
+            ctx.fillStyle = '#C0C0C0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Add shine effect
+            ctx.fillStyle = '#E8E8E8';
+            ctx.fillRect(0, 0, canvas.width / 2, canvas.height);
+            
+            // Add text
+            ctx.fillStyle = '#999';
+            ctx.font = 'bold 30px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('SCRATCH HERE', canvas.width / 2, canvas.height / 2);
+
+            let isDrawing = false;
+            let hasRevealed = false;
+
+            function getPosition(e) {
+                const rect = canvas.getBoundingClientRect();
+                if (e.touches && e.touches[0]) {
+                    return {
+                        x: e.touches[0].clientX - rect.left,
+                        y: e.touches[0].clientY - rect.top
+                    };
+                }
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+
+            function scratching(x, y) {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 40, 0, Math.PI * 2);
+                ctx.fill();
+                console.log('Scratching at:', x, y);
+            }
+
+            function checkIfRevealed() {
+                if (hasRevealed) return;
+                
+                const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                let transparent = 0;
+                
+                for (let i = 0; i < pixels.data.length; i += 4) {
+                    if (pixels.data[i + 3] < 128) {
+                        transparent++;
+                    }
+                }
+                
+                const percentage = (transparent / (pixels.data.length / 4)) * 100;
+                console.log('Scratched:', percentage.toFixed(2) + '%');
+                
+                if (percentage > 30) {
+                    hasRevealed = true;
+                    canvas.style.opacity = '0';
+                    setTimeout(() => {
+                        canvas.style.display = 'none';
+                        if (isWinner) {
+                            launchConfetti();
+                        } else {
+                            showSadEmojis();
+                        }
+                    }, 300);
+                }
+            }
+
+            function startScratch(e) {
+                e.preventDefault();
+                isDrawing = true;
+                const pos = getPosition(e);
+                scratching(pos.x, pos.y);
+                checkIfRevealed();
+                console.log('Started scratching');
+            }
+
+            function doScratch(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const pos = getPosition(e);
+                scratching(pos.x, pos.y);
+                checkIfRevealed();
+            }
+
+            function stopScratch(e) {
+                e.preventDefault();
+                isDrawing = false;
+                console.log('Stopped scratching');
+            }
+
+            // Mouse events
+            canvas.addEventListener('mousedown', startScratch);
+            canvas.addEventListener('mousemove', doScratch);
+            canvas.addEventListener('mouseup', stopScratch);
+            canvas.addEventListener('mouseleave', stopScratch);
+
+            // Touch events
+            canvas.addEventListener('touchstart', startScratch);
+            canvas.addEventListener('touchmove', doScratch);
+            canvas.addEventListener('touchend', stopScratch);
+            canvas.addEventListener('touchcancel', stopScratch);
+        }
+
+        function launchConfetti() {
+            const prizeContent = document.getElementById('prizeContent');
+            prizeContent.classList.add('winner-animation');
+            
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.display = 'block';
+
+            const particles = [];
+            const particleCount = 300;
+            const colors = ['#FFD700', '#FF1493', '#00FF00', '#FF4500', '#9370DB', '#00CED1', '#FF69B4', '#FFA500'];
+
+            class Confetti {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height - canvas.height;
+                    this.w = Math.random() * 10 + 5;
+                    this.h = Math.random() * 5 + 3;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.vx = (Math.random() - 0.5) * 8;
+                    this.vy = Math.random() * 5 + 3;
+                    this.rotation = Math.random() * 360;
+                    this.rotationSpeed = (Math.random() - 0.5) * 10;
+                    this.gravity = 0.2;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += this.gravity;
+                    this.rotation += this.rotationSpeed;
+                    
+                    if (this.x < 0 || this.x > canvas.width) {
+                        this.vx *= -0.5;
+                    }
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate((this.rotation * Math.PI) / 180);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+                    ctx.restore();
+                }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Confetti());
+            }
+
+            let animationFrameId;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    particles[i].update();
+                    particles[i].draw();
+                    
+                    if (particles[i].y > canvas.height + 50) {
+                        particles.splice(i, 1);
+                    }
+                }
+
+                if (particles.length > 0) {
+                    animationFrameId = requestAnimationFrame(animate);
+                } else {
+                    canvas.style.display = 'none';
+                }
+            }
+
+            animate();
+
+            // Add sparkles effect
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createSparkle();
+                }, i * 50);
+            }
+        }
+
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'fixed';
+            sparkle.style.width = '10px';
+            sparkle.style.height = '10px';
+            sparkle.style.borderRadius = '50%';
+            sparkle.style.background = 'radial-gradient(circle, #FFD700, transparent)';
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.zIndex = '999';
+            sparkle.style.animation = 'sparkle-fade 1s ease-out forwards';
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => sparkle.remove(), 1000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle-fade {
+                0% { opacity: 1; transform: scale(0); }
+                50% { opacity: 1; transform: scale(1.5); }
+                100% { opacity: 0; transform: scale(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function showSadEmojis() {
+            const sadEmojis = ['😢', '😭', '🥺', '😔', '💔', '😞'];
+            const emojiCount = 25;
+
+            for (let i = 0; i < emojiCount; i++) {
+                setTimeout(() => {
+                    const emoji = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+                    const emojiEl = document.createElement('div');
+                    emojiEl.innerHTML = emoji;
+                    emojiEl.style.cssText = `
+                        position: fixed;
+                        font-size: ${Math.random() * 40 + 50}px;
+                        left: ${Math.random() * 100}%;
+                        bottom: -100px;
+                        pointer-events: none;
+                        z-index: 10000;
+                        user-select: none;
+                    `;
+                    document.body.appendChild(emojiEl);
+
+                    let posY = -100;
+                    let posX = parseFloat(emojiEl.style.left);
+                    let rotation = 0;
+                    const speed = Math.random() * 2 + 2;
+                    const drift = (Math.random() - 0.5) * 0.5;
+                    const rotationSpeed = (Math.random() - 0.5) * 5;
+
+                    function animateEmoji() {
+                        posY += speed;
+                        posX += drift;
+                        rotation += rotationSpeed;
+                        
+                        emojiEl.style.bottom = posY + 'px';
+                        emojiEl.style.left = posX + '%';
+                        emojiEl.style.transform = `rotate(${rotation}deg)`;
+                        emojiEl.style.opacity = Math.max(0, 1 - posY / window.innerHeight);
+
+                        if (posY < window.innerHeight + 200) {
+                            requestAnimationFrame(animateEmoji);
+                        } else {
+                            emojiEl.remove();
+                        }
+                    }
+
+                    requestAnimationFrame(animateEmoji);
+                }, i * 80);
+            }
+
+            const prizeContent = document.getElementById('prizeContent');
+            prizeContent.style.animation = 'gentle-shake 0.5s ease-in-out';
+        }
+
+        function createFloatingEmoji(emoji) {
+            // This function is no longer needed
+        }
+
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes gentle-shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+
+        initGame();
+    </script>
+</body>
+</html>
